@@ -2,13 +2,12 @@
   description = "Lake (Lean Make) is a new build system and package manager for Lean 4.";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     lean = {
       url = "github:leanprover/lean4";
     };
     flake-utils = {
       url = "github:numtide/flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
