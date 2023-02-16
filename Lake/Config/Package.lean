@@ -205,7 +205,10 @@ structure Package where
   defaultTargets : Array Name := #[]
   /-- Scripts for the package. -/
   scripts : NameMap Script := {}
-  deriving Inhabited
+
+instance : Nonempty Package :=
+  have : Inhabited Environment := Classical.inhabited_of_nonempty inferInstance
+  by refine' ⟨{..}⟩ <;> exact default
 
 hydrate_opaque_type OpaquePackage Package
 
@@ -229,11 +232,15 @@ abbrev name (self : Package) : Name :=
   self.opaqueDeps.map (·.get)
 
 /--
-The package's remote packages directory
-(derived from its `packagesDir` configuration).
+The package's remote packages directory.
+Either its `packagesDir` configuration or `defaultPackagesDir`.
 -/
-def packagesDir (self : Package) : FilePath :=
-  self.dir / self.config.packagesDir.getD defaultPackagesDir
+def relPkgsDir (self : Package) : FilePath :=
+  self.config.packagesDir.getD defaultPackagesDir
+
+/-- The package's `dir` joined with its `relPkgsDir` -/
+def pkgsDir (self : Package) : FilePath :=
+  self.dir / self.relPkgsDir
 
 /-- The package's JSON manifest of remote dependencies. -/
 def manifestFile (self : Package) : FilePath :=
